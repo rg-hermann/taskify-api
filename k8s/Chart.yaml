@@ -1,0 +1,10 @@
+apiVersion: v2
+name: taskify-api
+version: 0.1.0
+description: API RESTful do sistema Taskify
+maintainers:
+  - name: rg-hermann
+dependencies:
+  - name: api-template
+    version: 0.1.0
+    repository: https://github.com/rg-hermann/k8s-helm-templates

@@ -1,0 +1,37 @@
+{
+  "name": "taskify-api",
+  "version": "1.0.0",
+  "description": "API RESTful para o sistema Taskify de gerenciamento de tarefas",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --coverage",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.6.3",
+    "amqplib": "^0.10.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "joi": "^17.11.0",
+    "winston": "^3.11.0",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^7.1.1",
+    "swagger-ui-express": "^5.0.0",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.1",
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.3",
+    "husky": "^8.0.3"
+  },
+  "author": "rg-hermann",
+  "license": "MIT"
+}

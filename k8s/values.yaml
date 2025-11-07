@@ -1,0 +1,39 @@
+api-template:
+  # Configurações específicas da aplicação, sobrescrevendo os defaults do template
+  image:
+    repository: taskify-api
+    tag: latest
+    
+  ingress:
+    host: api.taskify.local
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/cors-allow-origin: "http://taskify.local"
+
+  configmap:
+    data:
+      NODE_ENV: development
+      PORT: "3000"
+      API_PREFIX: /api
+      CORS_ORIGIN: http://taskify.local
+      LOG_LEVEL: info
+      MONGODB_HOST: mongodb-service
+      MONGODB_PORT: "27017"
+      RABBITMQ_HOST: rabbitmq-service
+      RABBITMQ_PORT: "5672"
+
+  secret:
+    data:
+      JWT_SECRET: change-me-in-production
+      MONGODB_USER: admin
+      MONGODB_PASSWORD: admin123
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
+
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
