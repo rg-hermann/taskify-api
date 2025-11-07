@@ -17,9 +17,9 @@ api-template:
       API_PREFIX: /api
       CORS_ORIGIN: http://taskify.local
       LOG_LEVEL: info
-      MONGODB_HOST: mongodb-service
+      MONGODB_HOST: task-mongo-mongodb
       MONGODB_PORT: "27017"
-      RABBITMQ_HOST: rabbitmq-service
+      RABBITMQ_HOST: task-rabbitmq
       RABBITMQ_PORT: "5672"
 
   secret:
