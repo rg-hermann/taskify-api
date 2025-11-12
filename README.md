@@ -67,6 +67,68 @@ npm install
 npm run dev
 ```
 
+### Exemplos de uso (curl)
+
+Abaixo estão exemplos práticos de chamadas à API usando curl. Substitua a porta/host se necessário. Use jq para formatar a saída JSON.
+
+- Listar tarefas
+```bash
+curl -s http://localhost:3000/api/tasks | jq
+```
+
+- Criar uma tarefa
+```bash
+curl -s -X POST http://localhost:3000/api/tasks \
+    -H "Content-Type: application/json" \
+    -d '{"title":"Teste","description":"descr"}' | jq
+```
+Resposta esperada (exemplo):
+```json
+{
+    "id": 1,
+    "title": "Teste",
+    "description": "descr",
+    "completed": false,
+    "createdAt": "2025-11-12T12:00:00Z"
+}
+```
+
+- Atualizar uma tarefa
+```bash
+curl -s -X PUT http://localhost:3000/api/tasks/1 \
+    -H "Content-Type: application/json" \
+    -d '{"title":"Atualizada","completed":true}' | jq
+```
+Resposta esperada (exemplo):
+```json
+{
+    "id": 1,
+    "title": "Atualizada",
+    "description": "descr",
+    "completed": true,
+    "updatedAt": "2025-11-12T12:30:00Z"
+}
+```
+
+- Remover uma tarefa (ver cabeçalhos)
+```bash
+curl -s -X DELETE http://localhost:3000/api/tasks/1 -I
+```
+Para ver o corpo da resposta (se houver), remova `-I`:
+```bash
+curl -s -X DELETE http://localhost:3000/api/tasks/1 | jq
+```
+
+Dicas rápidas:
+- Para enviar JSON a partir de um arquivo: `-d @payload.json`
+- Para ver respostas completas sem jq, remova o pipe `| jq`
+- Adicione `-v` ao curl para depuração de requisições/headers
+- Ajuste autenticação (ex.: `-H "Authorization: Bearer <token>"`) se a API exigir
+
+
+
+
+
 ### Docker
 
 Build da imagem:
