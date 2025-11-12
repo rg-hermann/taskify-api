@@ -4,7 +4,8 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
-const mongoose = require('mongoose');
+// sqlite DB init
+const { init: initDb } = require('./db');
 
 const { errorHandler } = require('./middleware/errorHandler');
 const { logger } = require('./utils/logger');
@@ -61,13 +62,9 @@ app.use(errorHandler);
 // Start server after DB connection (best-effort)
 const start = async () => {
   try {
-    if (config.mongodbUri) {
-      logger.info('Connecting to MongoDB...');
-      await mongoose.connect(config.mongodbUri, config.mongodbOptions);
-      logger.info('Connected to MongoDB');
-    } else {
-      logger.warn('No MongoDB URI provided — skipping DB connection');
-    }
+    logger.info('Initializing SQLite database...');
+    await initDb();
+    logger.info('SQLite initialized');
 
     const server = app.listen(config.port, () => {
       logger.info(`Server listening on port ${config.port}`);
@@ -78,10 +75,7 @@ const start = async () => {
       logger.info('Shutting down...');
       server.close(() => {
         logger.info('HTTP server closed');
-        mongoose.connection.close(false, () => {
-          logger.info('MongoDB connection closed');
-          process.exit(0);
-        });
+        process.exit(0);
       });
     };
 

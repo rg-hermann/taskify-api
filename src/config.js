@@ -7,11 +7,7 @@ const config = {
   corsOrigin: process.env.CORS_ORIGIN || '*',
   rateLimitWindowMs: process.env.RATE_LIMIT_WINDOW_MS ? Number(process.env.RATE_LIMIT_WINDOW_MS) : 15 * 60 * 1000,
   rateLimitMax: process.env.RATE_LIMIT_MAX ? Number(process.env.RATE_LIMIT_MAX) : 100,
-  mongodbUri: process.env.MONGODB_URI || process.env.MONGODB || 'mongodb://localhost:27017/taskify',
-  mongodbOptions: {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
+  // No DB URI required for local SQLite
   rabbitmqUri: process.env.RABBITMQ_URI || 'amqp://localhost:5672',
 };
 

@@ -14,7 +14,7 @@ const taskSchema = Joi.object({
 // List tasks
 router.get('/', async (req, res, next) => {
   try {
-    const tasks = await Task.find().sort({ createdAt: -1 }).limit(100);
+    const tasks = await Task.findAll();
     res.json(tasks);
   } catch (err) {
     next(err);
@@ -49,7 +49,7 @@ router.put('/:id', async (req, res, next) => {
   try {
     const { error, value } = taskSchema.validate(req.body, { stripUnknown: true });
     if (error) return res.status(400).json({ message: error.message });
-    const updated = await Task.findByIdAndUpdate(req.params.id, value, { new: true });
+    const updated = await Task.update(req.params.id, value);
     if (!updated) return res.status(404).json({ message: 'Not found' });
     res.json(updated);
   } catch (err) {
@@ -60,8 +60,8 @@ router.put('/:id', async (req, res, next) => {
 // Delete
 router.delete('/:id', async (req, res, next) => {
   try {
-    const deleted = await Task.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Not found' });
+    const deleted = await Task.delete(req.params.id);
+    if (deleted.changes === 0) return res.status(404).json({ message: 'Not found' });
     res.status(204).send();
   } catch (err) {
     next(err);

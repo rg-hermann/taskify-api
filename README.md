@@ -16,7 +16,7 @@ API RESTful do sistema Taskify para gerenciamento de tarefas.
 
 - Node.js
 - Express
-- MongoDB (com Mongoose)
+- SQLite (better-sqlite3)
 - RabbitMQ
 - Jest (testes)
 - Docker
@@ -29,7 +29,7 @@ taskify-api/
 ├── src/
 │   ├── config/           # Configurações da aplicação
 │   ├── controllers/      # Controladores da API
-│   ├── models/          # Modelos do Mongoose
+│   ├── models/          # Modelos SQLite
 │   ├── routes/          # Rotas da API
 │   ├── services/        # Lógica de negócio
 │   ├── utils/           # Utilitários
@@ -62,12 +62,7 @@ cd taskify-api
 npm install
 ```
 
-3. Configure as variáveis de ambiente
-```bash
-cp .env.example .env
-```
-
-4. Inicie o servidor de desenvolvimento
+3. Inicie o servidor de desenvolvimento
 ```bash
 npm run dev
 ```
@@ -82,6 +77,7 @@ docker build -t taskify-api .
 Executar container:
 ```bash
 docker run -p 3000:3000 taskify-api
+O banco de dados SQLite será criado automaticamente no diretório do container.
 ```
 
 ### Kubernetes/Helm
