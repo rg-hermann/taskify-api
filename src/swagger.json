@@ -1,0 +1,20 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Taskify API",
+    "version": "1.0.0",
+    "description": "Minimal API documentation for Taskify"
+  },
+  "paths": {
+    "/api/tasks": {
+      "get": {
+        "summary": "List tasks",
+        "responses": { "200": { "description": "OK" } }
+      },
+      "post": {
+        "summary": "Create task",
+        "responses": { "201": { "description": "Created" } }
+      }
+    }
+  }
+}

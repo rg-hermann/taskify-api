@@ -4,62 +4,95 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
+const mongoose = require('mongoose');
 
 const { errorHandler } = require('./middleware/errorHandler');
 const { logger } = require('./utils/logger');
 const config = require('./config');
-const routes = require('./routes');
+const apiRoutes = require('./routes');
 
 const app = express();
 
-// Middleware de segurança
+// Basic middleware
 app.use(helmet());
-
-// CORS
-app.use(cors({
-  origin: config.corsOrigin,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-
-// Compressão de resposta
+app.use(
+  cors({
+    origin: config.corsOrigin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.use(compression());
 
-// Rate limiting
+// Rate limiter
 const limiter = rateLimit({
   windowMs: config.rateLimitWindowMs,
   max: config.rateLimitMax,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use(limiter);
 
-// Parse JSON
 app.use(express.json());
 
-// Logging de requisições
+// Request logging
 app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.url}`);
+  logger.info(`${req.method} ${req.originalUrl}`);
   next();
 });
 
-// Rotas da API
-app.use('/api', routes);
+// Routes
+app.use('/api', apiRoutes);
 
-// Documentação Swagger
-const swaggerDocument = require('./swagger.json');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Swagger UI (optional)
+try {
+  const swaggerDocument = require('./swagger.json');
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+} catch (err) {
+  logger.debug('Swagger document not found, skipping /api-docs');
+}
 
-// Health check
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'UP' });
-});
+// Health
+app.get('/health', (req, res) => res.json({ status: 'UP' }));
 
-// Handler de erros
+// Error handler (last middleware)
 app.use(errorHandler);
 
-// Inicialização do servidor
-const PORT = config.port;
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-});
+// Start server after DB connection (best-effort)
+const start = async () => {
+  try {
+    if (config.mongodbUri) {
+      logger.info('Connecting to MongoDB...');
+      await mongoose.connect(config.mongodbUri, config.mongodbOptions);
+      logger.info('Connected to MongoDB');
+    } else {
+      logger.warn('No MongoDB URI provided — skipping DB connection');
+    }
+
+    const server = app.listen(config.port, () => {
+      logger.info(`Server listening on port ${config.port}`);
+    });
+
+    // graceful shutdown
+    const shutdown = async () => {
+      logger.info('Shutting down...');
+      server.close(() => {
+        logger.info('HTTP server closed');
+        mongoose.connection.close(false, () => {
+          logger.info('MongoDB connection closed');
+          process.exit(0);
+        });
+      });
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+  } catch (err) {
+    logger.error('Failed to start server', err);
+    process.exit(1);
+  }
+};
+
+start();
 
 module.exports = app;

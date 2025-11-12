@@ -1,0 +1,18 @@
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const config = {
+  port: process.env.PORT ? Number(process.env.PORT) : 3000,
+  corsOrigin: process.env.CORS_ORIGIN || '*',
+  rateLimitWindowMs: process.env.RATE_LIMIT_WINDOW_MS ? Number(process.env.RATE_LIMIT_WINDOW_MS) : 15 * 60 * 1000,
+  rateLimitMax: process.env.RATE_LIMIT_MAX ? Number(process.env.RATE_LIMIT_MAX) : 100,
+  mongodbUri: process.env.MONGODB_URI || process.env.MONGODB || 'mongodb://localhost:27017/taskify',
+  mongodbOptions: {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  rabbitmqUri: process.env.RABBITMQ_URI || 'amqp://localhost:5672',
+};
+
+module.exports = config;
